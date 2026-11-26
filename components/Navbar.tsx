@@ -1,46 +1,60 @@
-import { NAV_LINKS } from "@/constants"
-import Image from "next/image"
-import Link from "next/link"
-import Button from "./Button"
+'use client'
 
-const Navbar = () => {
+import { useEffect, useRef, useState } from 'react'
+import { navigation, siteName } from '@/constants/climbing'
+import ClimbingIcon from './ClimbingIcon'
+
+export default function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('#inicio')
+  const menuButton = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    function updateSection() {
+      setActiveSection(window.location.hash || '#inicio')
+    }
+
+    updateSection()
+    window.addEventListener('hashchange', updateSection)
+    return () => window.removeEventListener('hashchange', updateSection)
+  }, [])
+
   return (
-    <nav className="flex items-center justify-between max-container padding-container relative z-30 py-5 backdrop-blur-md bg-white/80 rounded-b-3xl border-b border-gray-10">
-      <Link href="/" className="hover:opacity-80 transition-opacity">
-        <Image src="/hilink-logo.svg" alt="logo" width={74} height={29} className="drop-shadow-sm" />
-      </Link>
-
-      <ul className="hidden h-full gap-12 lg:flex">
-        {NAV_LINKS.map((link) => (
-          <Link 
-            href={link.href} 
-            key={link.key} 
-            className="regular-16 text-gray-50 flex items-center justify-center cursor-pointer pb-1.5 transition-all duration-300 hover:text-green-50 hover:font-bold relative group"
-          >
-            {link.label}
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-50 transition-all duration-300 group-hover:w-full"></span>
-          </Link>
-        ))}
-      </ul>
-
-      <div className="hidden lg:flex">
-        <Button
+    <header className="site-header">
+      <div className="site-shell header-inner" onKeyDown={(event) => {
+        if (event.key === 'Escape' && menuOpen) {
+          setMenuOpen(false)
+          menuButton.current?.focus()
+        }
+      }}>
+        <a className="brand" href="#inicio" onClick={() => setMenuOpen(false)} aria-label={`${siteName} — início`}>
+          <span className="brand-mark"><ClimbingIcon name="mountain" width="22" height="22" /></span>
+          <span>{siteName}<span className="brand-dot" aria-hidden="true">.</span></span>
+        </a>
+        <button
           type="button"
-          title="Login"
-          icon="/user.svg"
-          variant="btn_dark_green"
-        />
+          ref={menuButton}
+          className="menu-toggle"
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={menuOpen}
+          aria-controls="site-navigation"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <ClimbingIcon name={menuOpen ? 'close' : 'menu'} />
+        </button>
+        <nav id="site-navigation" className="site-nav" data-open={menuOpen} aria-label="Navegação principal">
+          <ul>
+            {navigation.map(({ href, label }) => (
+              <li key={href}>
+                <a href={href} aria-current={activeSection === href ? 'location' : undefined} onClick={() => setMenuOpen(false)}>{label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <a className="action action-header" href="#mapa">
+          Explorar mapa <ClimbingIcon name="external" width="16" height="16" />
+        </a>
       </div>
-
-      <Image
-        src="/menu.svg"
-        alt="menu"
-        width={32}
-        height={32}
-        className="inline-block cursor-pointer lg:hidden hover:opacity-70 transition-opacity"
-      />
-    </nav>
+    </header>
   )
 }
-
-export default Navbar

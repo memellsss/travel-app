@@ -1,82 +1,67 @@
-import { FOOTER_CONTACT_INFO, FOOTER_LINKS, SOCIALS } from '@/constants'
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+import { navigation, siteName } from '@/constants/climbing'
+import ClimbingIcon from './ClimbingIcon'
 
-const Footer = () => {
+const photos = [
+  {
+    name: 'Pedra do Baú (capa)',
+    author: 'Rodrigorosa85',
+    source: 'https://commons.wikimedia.org/wiki/File:Monumento_Natural_Estadual_da_Pedra_do_Ba%C3%BA_Rodrigo_Rosa_(01).jpg',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+  },
+  {
+    name: 'Pedra do Baú (destino)',
+    author: 'Nancy Ayumi Kunihiro',
+    source: 'https://commons.wikimedia.org/wiki/File:MONA_Estadual_da_Pedra_do_Ba%C3%BA_-_NANCY_AYUMI_KUNIHIRO(003).jpg',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+  },
+  {
+    name: 'Serra do Cipó',
+    author: 'upslon',
+    source: 'https://commons.wikimedia.org/wiki/File:Parque_Nacional_da_Serra_do_Cip%C3%B3_(32099569004).jpg',
+    license: 'CC BY 2.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
+  },
+  {
+    name: 'Rampa do Caim, Igatu',
+    author: 'Boa Viagem Tropical',
+    source: 'https://commons.wikimedia.org/wiki/File:Rampa_do_Caim,_Igatu,_Chapada_Diamantina,_Bahia,_Brasil.jpg',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+  },
+]
+
+export default function Footer() {
   return (
-    <footer className="flex items-center justify-center mb-24 bg-gradient-to-br from-green-90 to-green-800 text-white py-16">
-      <div className="padding-container max-container flex w-full flex-col gap-14">
-        <div className="flex flex-col items-start justify-center gap-[10%] md:flex-row">
-          <Link href="/" className="mb-10 hover:opacity-80 transition-opacity">
-            <Image src="hilink-logo.svg" alt="logo" width={74} height={29} className="drop-shadow-md"/>
-          </Link>
-
-          <div className='flex flex-wrap gap-10 sm:justify-between md:flex-1'>
-            {FOOTER_LINKS.map((columns, idx) => (
-              <FooterColumn key={idx} title={columns.title}>
-                <ul className="regular-14 flex flex-col gap-4 text-gray-10">
-                  {columns.links.map((link) => (
-                    <Link href="/" key={link} className="hover:text-green-50 transition-colors duration-300">
-                      {link}
-                    </Link>
-                  ))}
-                </ul>
-              </FooterColumn>
-            ))}
-
-            <div className="flex flex-col gap-5">
-              <FooterColumn title={FOOTER_CONTACT_INFO.title}>
-                {FOOTER_CONTACT_INFO.links.map((link) => (
-                  <Link
-                    href="/"
-                    key={link.label}
-                    className="flex gap-4 md:flex-col lg:flex-row hover:text-green-50 transition-colors duration-300"
-                  >
-                    <p className="whitespace-nowrap">
-                      {link.label}:
-                    </p>
-                    <p className="medium-14 whitespace-nowrap text-green-50">
-                      {link.value}
-                    </p>
-                  </Link>
-                ))}
-              </FooterColumn>
-            </div>
-
-            <div className="flex flex-col gap-5">
-              <FooterColumn title={SOCIALS.title}>
-                <ul className="regular-14 flex gap-4 text-gray-30">
-                  {SOCIALS.links.map((link) => (
-                    <Link href="/" key={link} className="hover:opacity-70 transition-opacity duration-300">
-                      <Image src={link} alt="logo" width={24} height={24} className="drop-shadow-sm" />
-                    </Link>
-                  ))}
-                </ul>
-              </FooterColumn>
-            </div>
+    <footer className="site-footer">
+      <div className="site-shell">
+        <div className="footer-main">
+          <div>
+            <a className="brand" href="#inicio" aria-label={`${siteName} — início`}>
+              <span className="brand-mark"><ClimbingIcon name="mountain" width="22" height="22" /></span>
+              <span>{siteName}<span className="brand-dot" aria-hidden="true">.</span></span>
+            </a>
+            <p>Guia brasileiro de escalada em rocha.</p>
           </div>
+          <nav className="footer-nav" aria-label="Navegação do rodapé">
+            {navigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
+          </nav>
+          <a href="#inicio" className="footer-top" aria-label="Voltar ao início"><ClimbingIcon name="up" width="19" height="19" /></a>
         </div>
-
-        <div className="border border-gray-20/30" />
-        <p className="regular-14 w-full text-center text-gray-10">2024 Hilink | All rights reserved</p>
+        <div className="footer-bottom">
+          <p>{siteName} · Escalada no Brasil</p>
+          <details className="footer-credits">
+            <summary>Créditos das fotos</summary>
+            <ul>
+              {photos.map(({ name, author, source, license, licenseUrl }) => (
+                <li key={source}><a href={source}>{name}</a> · {author} · <a href={licenseUrl}>{license}</a></li>
+              ))}
+              <li>Imagens redimensionadas e convertidas para WebP.</li>
+            </ul>
+          </details>
+        </div>
       </div>
     </footer>
   )
 }
-
-type FooterColumnProps = {
-  title: string;
-  children: React.ReactNode;
-}
-
-const FooterColumn = ({ title, children }: FooterColumnProps) => {
-  return (
-    <div className="flex flex-col gap-5">
-      <h4 className="bold-18 whitespace-nowrap text-green-50">{title}</h4>
-      {children}
-    </div>
-  )
-}
-
-export default Footer
